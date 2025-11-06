@@ -1,2 +1,16 @@
-*.user
+# VS build & user files
+bin/
+obj/
 .vs/
+*.user
+*.suo
+*.cache
+*.log
+*.dbmdl
+*.jfm
+
+# Publish output
+publish/
+
+# Packages
+packages/
