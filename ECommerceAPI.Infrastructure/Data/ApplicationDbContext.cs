@@ -8,6 +8,7 @@ namespace ECommerceAPI.Infrastructure.Data
         public ApplicationDbContext()
             : base("DefaultConnection") // Connection string name from Web.config
         {
+            var ensureDLLIsCopied = System.Data.Entity.SqlServer.SqlProviderServices.Instance;
         }
 
         // DbSets (Tables)

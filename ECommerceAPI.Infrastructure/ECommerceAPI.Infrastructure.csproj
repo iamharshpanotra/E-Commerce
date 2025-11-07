@@ -57,6 +57,14 @@
     <Compile Include="Migrations\202511061041304_InitialCreate.Designer.cs">
       <DependentUpon>202511061041304_InitialCreate.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202511061140187_AddAuditFields.cs" />
+    <Compile Include="Migrations\202511061140187_AddAuditFields.Designer.cs">
+      <DependentUpon>202511061140187_AddAuditFields.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202511061156174_UpdateAuditFields.cs" />
+    <Compile Include="Migrations\202511061156174_UpdateAuditFields.Designer.cs">
+      <DependentUpon>202511061156174_UpdateAuditFields.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\GenericRepository.cs" />
@@ -75,6 +83,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202511061041304_InitialCreate.resx">
       <DependentUpon>202511061041304_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202511061140187_AddAuditFields.resx">
+      <DependentUpon>202511061140187_AddAuditFields.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202511061156174_UpdateAuditFields.resx">
+      <DependentUpon>202511061156174_UpdateAuditFields.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
