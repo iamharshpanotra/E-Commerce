@@ -1,70 +1,68 @@
-﻿using System;
-using System.Collections.Generic;
-using ECommerceAPI.Core.Entities;
+﻿using ECommerceAPI.Core.Entities;
 using ECommerceAPI.Core.Interfaces;
+using ECommerceAPI.Core.Interfaces.Service;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ECommerceAPI.Application.Services
 {
-    public class ProductService
+    public class ProductService : IProductService
     {
-        private readonly IGenericRepository<Product> _productRepo;
+        private readonly IProductRepository _repo;
 
-        public ProductService(IGenericRepository<Product> productRepo)
+        public ProductService(IProductRepository repo)
         {
-            _productRepo = productRepo;
+            _repo = repo;
         }
 
-        public IEnumerable<Product> GetAllProducts()
-        {
-            return _productRepo.GetAll();
-        }
+        public IEnumerable<Product> GetAll() => _repo.GetProducts("All");
 
-        public Product GetProductById(int id)
-        {
-            return _productRepo.GetById(id);
-        }
+        public IEnumerable<Product> GetActive() => _repo.GetProducts("Active");
 
-        public void AddProduct(Product product)
+        public Product GetById(int id) =>
+            _repo.GetProducts("ById", id).FirstOrDefault();
+
+        public void Add(Product product)
         {
             product.CreatedBy = "Admin";
             product.CreatedDate = DateTime.UtcNow;
-            _productRepo.Add(product);
-            _productRepo.Save();
+            _repo.ManageProduct("Insert", product);
         }
 
-
-        public void UpdateProduct(Product updatedProduct)
+        public void Update(Product product)
         {
-            var existingProduct = _productRepo.GetById(updatedProduct.Id);
+            var existing = _repo.GetProducts("ById", product.Id).FirstOrDefault();
+            if (existing == null)
+                throw new Exception("Product not found.");
 
-            if (existingProduct == null)
-                throw new Exception("Product not found");
+            // Only update the fields that were provided
+            if (product.Name != null)
+                existing.Name = product.Name;
 
-            // Update only the fields that are changeable
-            existingProduct.Name = updatedProduct.Name;
-            existingProduct.Description = updatedProduct.Description;
-            existingProduct.Price = updatedProduct.Price;
-            existingProduct.Stock = updatedProduct.Stock;
-            existingProduct.CategoryId = updatedProduct.CategoryId;
+            if (product.Description != null)
+                existing.Description = product.Description;
 
-            // Audit fields
-            existingProduct.UpdatedBy = "Admin"; // later replace with actual user
-            existingProduct.UpdatedDate = DateTime.UtcNow;
+            if (product.Price != 0)
+                existing.Price = product.Price;
 
-            _productRepo.Update(existingProduct);
-            _productRepo.Save();
+            if (product.Stock != 0)
+                existing.Stock = product.Stock;
+
+            if (product.CategoryId != 0)
+                existing.CategoryId = product.CategoryId;
+
+            existing.IsActive = product.IsActive; // boolean safe default
+            existing.UpdatedBy = "Admin";
+            existing.UpdatedDate = DateTime.UtcNow;
+
+            _repo.ManageProduct("Update", existing);
         }
 
-
-        public void DeleteProduct(int id)
+        public void SoftDelete(int id)
         {
-            var product = _productRepo.GetById(id);
-            product.IsDeleted = true;
-            product.DeletedBy = "Admin";
-            product.DeletedDate = DateTime.UtcNow;
-            _productRepo.Update(product);
-            _productRepo.Save();
+            var product = new Product { Id = id };
+            _repo.ManageProduct("Delete", product);
         }
-
     }
 }

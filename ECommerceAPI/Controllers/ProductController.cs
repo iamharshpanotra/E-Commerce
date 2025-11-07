@@ -1,10 +1,10 @@
 ﻿using ECommerceAPI.Application.Services;
 using ECommerceAPI.Core.Entities;
-using ECommerceAPI.Core.Interfaces;
+using ECommerceAPI.Core.Interfaces.Service;
 using ECommerceAPI.Infrastructure.Data;
 using ECommerceAPI.Infrastructure.Repositories;
 using System;
-using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace ECommerceAPI.Controllers
@@ -12,69 +12,53 @@ namespace ECommerceAPI.Controllers
     [RoutePrefix("api/products")]
     public class ProductController : ApiController
     {
-        private readonly ProductService _productService;
+        private readonly IProductService _productService;
 
         public ProductController()
         {
-            // Temporary manual dependency setup
             var dbContext = new ApplicationDbContext();
-            var productRepo = new GenericRepository<Product>(dbContext);
-            _productService = new ProductService(productRepo);
+            _productService = new ProductService(new ProductRepository(dbContext));
         }
 
-        // GET: api/products
         [HttpGet]
         [Route("")]
-        public IHttpActionResult GetAllProducts()
-        {
-            var products = _productService.GetAllProducts();
-            return Ok(products);
-        }
+        public IHttpActionResult GetAll() => Ok(_productService.GetAll());
 
-        // GET: api/products/{id}
+        [HttpGet]
+        [Route("active")]
+        public IHttpActionResult GetActive() => Ok(_productService.GetActive());
+
         [HttpGet]
         [Route("{id:int}")]
-        public IHttpActionResult GetProduct(int id)
+        public IHttpActionResult GetById(int id)
         {
-            var product = _productService.GetProductById(id);
-            if (product == null)
-                return NotFound();
-
-            return Ok(product);
+            var product = _productService.GetById(id);
+            return product == null ? (IHttpActionResult)NotFound() : Ok(product);
         }
 
-        // POST: api/products
         [HttpPost]
         [Route("")]
-        public IHttpActionResult CreateProduct([FromBody] Product product)
+        public IHttpActionResult Add(Product product)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            _productService.AddProduct(product);
-            return Ok("Product created successfully.");
+            _productService.Add(product);
+            return Ok("Product created.");
         }
 
         [HttpPut]
         [Route("{id:int}")]
-        public IHttpActionResult UpdateProduct(int id, [FromBody] Product product)
+        public IHttpActionResult Update(int id, Product product)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            if (id != product.Id)
-                return BadRequest("Product ID mismatch");
-
-            try
-            {
-                _productService.UpdateProduct(product);
-                return Ok("Product updated successfully");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            if (id != product.Id) return BadRequest("ID mismatch.");
+            _productService.Update(product);
+            return Ok("Product updated.");
         }
 
+        [HttpDelete]
+        [Route("{id:int}")]
+        public IHttpActionResult SoftDelete(int id)
+        {
+            _productService.SoftDelete(id);
+            return Ok("Product soft-deleted.");
+        }
     }
 }

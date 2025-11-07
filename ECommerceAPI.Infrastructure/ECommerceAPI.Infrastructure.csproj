@@ -65,9 +65,14 @@
     <Compile Include="Migrations\202511061156174_UpdateAuditFields.Designer.cs">
       <DependentUpon>202511061156174_UpdateAuditFields.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202511070630260_AddSoftDeleteFields.cs" />
+    <Compile Include="Migrations\202511070630260_AddSoftDeleteFields.Designer.cs">
+      <DependentUpon>202511070630260_AddSoftDeleteFields.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\GenericRepository.cs" />
+    <Compile Include="Repositories\ProductRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ECommerceAPI.Core\ECommerceAPI.Core.csproj">
@@ -89,6 +94,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202511061156174_UpdateAuditFields.resx">
       <DependentUpon>202511061156174_UpdateAuditFields.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202511070630260_AddSoftDeleteFields.resx">
+      <DependentUpon>202511070630260_AddSoftDeleteFields.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
