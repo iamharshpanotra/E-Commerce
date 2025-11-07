@@ -1,11 +1,8 @@
 ﻿using ECommerceAPI.Core.DTOs;
 using ECommerceAPI.Core.Entities;
 using ECommerceAPI.Core.Interfaces.Service;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Http;
 
 namespace ECommerceAPI.Controllers
@@ -22,14 +19,18 @@ namespace ECommerceAPI.Controllers
 
         [HttpGet]
         [Route("")]
-        public IHttpActionResult GetAll() =>
-            Ok(new ApiResponse<IEnumerable<CategoryDto>>
+        public IHttpActionResult GetAll()
+        {
+            var categories = _categoryService.GetAll();
+
+            return Ok(new ApiResponse<IEnumerable<CategoryDto>>
             {
                 Success = true,
                 Message = "All categories fetched successfully.",
-                Data = _categoryService.GetAll(),
+                Data = categories,
                 StatusCode = 200
             });
+        }
 
         [HttpGet]
         [Route("active")]

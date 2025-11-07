@@ -50,6 +50,7 @@ namespace ECommerceAPI.Application.Services
 
             existing.Name = category.Name;
             existing.IsActive = category.IsActive;
+            existing.IsDeleted = category.IsDeleted;
             existing.UpdatedBy = "Admin";
             existing.UpdatedDate = DateTime.UtcNow;
 

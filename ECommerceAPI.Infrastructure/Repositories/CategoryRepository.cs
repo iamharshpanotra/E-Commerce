@@ -26,7 +26,7 @@ namespace ECommerceAPI.Infrastructure.Repositories
 
             using (var command = _context.Database.Connection.CreateCommand())
             {
-                command.CommandText = "usp_manageCategory";
+                command.CommandText = "usp_getCategories";
                 command.CommandType = CommandType.StoredProcedure;
 
                 command.Parameters.Add(new SqlParameter("@Action", action));
