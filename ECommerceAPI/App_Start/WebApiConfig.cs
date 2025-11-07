@@ -1,9 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿using ECommerceAPI.App_Start.ExceptionHandling;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
+using System.Web.Http.ExceptionHandling;
 
 namespace ECommerceAPI
 {
@@ -21,6 +23,8 @@ namespace ECommerceAPI
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
+
+            config.Services.Replace(typeof(IExceptionHandler), new GlobalExceptionHandler());
 
             // ✅ Prevent JSON loop reference errors
             var json = config.Formatters.JsonFormatter;
