@@ -2,8 +2,9 @@
 using ECommerceAPI.Core.Entities;
 using ECommerceAPI.Core.Interfaces.Service;
 using System.Collections.Generic;
-using System.Web.Http;
+using System.Linq;
 using System.Net;
+using System.Web.Http;
 
 namespace ECommerceAPI.Controllers
 {
@@ -77,38 +78,70 @@ namespace ECommerceAPI.Controllers
         // Add new product
         [HttpPost]
         [Route("")]
-        public IHttpActionResult Add(Product product)
+        public IHttpActionResult Add(ProductRequestDto productDto)
         {
-            _productService.Add(product);
-            return Ok(new ApiResponse<string>
+            if (!ModelState.IsValid)
             {
-                Success = true,
-                Message = "Product created successfully.",
-                StatusCode = 201
-            });
-        }
-
-        // Update product
-        [HttpPut]
-        [Route("{id:int}")]
-        public IHttpActionResult Update(int id, Product product)
-        {
-            if (id != product.Id)
-            {
-                return Content(HttpStatusCode.BadRequest, new ApiResponse<string>
+                return Content(System.Net.HttpStatusCode.BadRequest, new ApiResponse<object>
                 {
                     Success = false,
-                    Message = "Product ID does not match.",
+                    Message = "Validation failed",
+                    Data = ModelState.Values.SelectMany(e => e.Errors).Select(e => e.ErrorMessage),
                     StatusCode = 400
                 });
             }
 
-            _productService.Update(product);
+            // Map DTO → Entity
+            var product = new Product
+            {
+                Name = productDto.Name,
+                Description = productDto.Description,
+                Price = productDto.Price,
+                Stock = productDto.Stock,
+                CategoryId = productDto.CategoryId
+            };
 
-            return Content(HttpStatusCode.OK, new ApiResponse<string>
+            _productService.Add(product);
+            return Ok(new ApiResponse<string>
             {
                 Success = true,
-                Message = "Product updated successfully.",
+                Message = "Product created successfully",
+                StatusCode = 201
+            });
+        }
+
+
+        // Update product
+        [HttpPut]
+        [Route("{id:int}")]
+        public IHttpActionResult Update(int id, ProductRequestDto productDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Content(System.Net.HttpStatusCode.BadRequest, new ApiResponse<object>
+                {
+                    Success = false,
+                    Message = "Validation failed",
+                    Data = ModelState.Values.SelectMany(e => e.Errors).Select(e => e.ErrorMessage),
+                    StatusCode = 400
+                });
+            }
+
+            var product = new Product
+            {
+                Id = id,
+                Name = productDto.Name,
+                Description = productDto.Description,
+                Price = productDto.Price,
+                Stock = productDto.Stock,
+                CategoryId = productDto.CategoryId
+            };
+
+            _productService.Update(product);
+            return Ok(new ApiResponse<string>
+            {
+                Success = true,
+                Message = "Product updated successfully",
                 StatusCode = 200
             });
         }
